@@ -1,14 +1,14 @@
 package account.auth.dto;
 
-import account.auth.UserAuth;
+import account.auth.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface UserAuthMapper {
 
-    UserAuth userAuthPostDtoToUserAuth(UserAuthPostDto userAuthPostDto);
-    UserAuthGetDto userAuthToUserAuthGetDto(UserAuth userAuth);
-
-    UserAuthGetDto userAuthPostDtoToUserAuthGetDto(UserAuthPostDto userAuthPostDto);
+    @Mapping(target = "id", ignore = true)
+    User userAuthPostDtoToUser(UserAuthPostDto userAuthPostDto);
+    UserAuthGetDto userToUserAuthGetDto(User userAuth);
 
 }
