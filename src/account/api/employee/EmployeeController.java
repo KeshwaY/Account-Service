@@ -1,33 +1,35 @@
-package account.auth;
+package account.api.employee;
 
-
+import account.auth.AuthController;
+import account.auth.User;
+import account.auth.UserRepository;
 import account.auth.dto.UserAuthGetDto;
-import account.auth.dto.UserAuthPostDto;
-import account.auth.exceptions.UserExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-
 @Validated
 @RestController
-@RequestMapping("/api/auth")
-public class AuthController {
+@RequestMapping("api/empl")
+public class EmployeeController {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
+    public EmployeeController(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<JBResponse> signUpUser(@RequestBody @Valid UserAuthPostDto userAuthPostDto) {
-        return new ResponseEntity<>(new JBResponse(userService.signUpUser(userAuthPostDto)), HttpStatus.OK);
+    @GetMapping("/payment")
+    public ResponseEntity<JBResponse> getPayment(
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        User user = userRepository.findByEmail(userDetails.getUsername()).get();
+        return new ResponseEntity<>(new JBResponse(user), HttpStatus.OK);
     }
 
     private final static class JBResponse {
@@ -37,7 +39,7 @@ public class AuthController {
         private String lastname;
         private String email;
 
-        public JBResponse(UserAuthGetDto authGetDto) {
+        public JBResponse(User authGetDto) {
             JBResponse.id++;
             this.name = authGetDto.getName();
             this.lastname = authGetDto.getLastname();
