@@ -2,3 +2,4 @@
 /build/
 /test/AccountServiceTest.java
 .DS_Store
+/src/generated/
