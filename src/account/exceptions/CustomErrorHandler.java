@@ -1,5 +1,6 @@
-package account.employee;
+package account.exceptions;
 
+import account.exceptions.RequestValidationExceptionDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
