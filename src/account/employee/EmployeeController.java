@@ -1,9 +1,7 @@
-package account.api.employee;
+package account.employee;
 
-import account.auth.AuthController;
-import account.auth.User;
-import account.auth.UserRepository;
-import account.auth.dto.UserAuthGetDto;
+import account.user.User;
+import account.user.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
