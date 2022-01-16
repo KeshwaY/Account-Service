@@ -1,11 +1,15 @@
 package account.auth;
 
 
+import account.auth.dto.NewPasswordPostDto;
+import account.auth.dto.PasswordChangedDto;
 import account.auth.dto.UserAuthGetDto;
 import account.auth.dto.UserAuthPostDto;
-import account.auth.exceptions.UserExistException;
+import account.user.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +32,16 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<JBResponse> signUpUser(@RequestBody @Valid UserAuthPostDto userAuthPostDto) {
         return new ResponseEntity<>(new JBResponse(userService.signUpUser(userAuthPostDto)), HttpStatus.OK);
+    }
+
+    @PostMapping("/changepass")
+    public ResponseEntity<PasswordChangedDto> changeUserPassword(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody @Valid NewPasswordPostDto newPasswordPostDto
+    ) {
+        String userEmail = userDetails.getUsername();
+        String userPassword = userDetails.getPassword();
+        return new ResponseEntity<>(userService.changeUserPassword(userEmail, userPassword, newPasswordPostDto), HttpStatus.OK);
     }
 
     private final static class JBResponse {

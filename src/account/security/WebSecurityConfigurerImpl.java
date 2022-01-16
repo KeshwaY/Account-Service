@@ -34,7 +34,8 @@ public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .mvcMatchers(HttpMethod.GET, "api/empl/payment").hasRole("USER")
+                .mvcMatchers(HttpMethod.GET, "/api/empl/payment").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/auth/changepass").authenticated()
                 .antMatchers(HttpMethod.POST, "/api/singup").permitAll()
                 .and()
                 .sessionManagement()

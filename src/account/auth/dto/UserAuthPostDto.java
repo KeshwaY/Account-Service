@@ -1,7 +1,9 @@
 package account.auth.dto;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 public class UserAuthPostDto {
 
@@ -12,10 +14,11 @@ public class UserAuthPostDto {
     private String lastname;
 
     @NotBlank
-    @Email(regexp = ".+@acme\\.com")
+    @Email(regexp = ".+@acme\\.com", message = "Unsupported email address!")
     private String email;
 
     @NotBlank
+    @Size(min = 12, message = "Password length must be 12 chars minimum!")
     private String password;
 
     public String getName() {
