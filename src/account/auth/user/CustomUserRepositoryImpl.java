@@ -1,4 +1,4 @@
-package account.user;
+package account.auth.user;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
@@ -22,10 +22,10 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
         Update update = new Update();
         update.set("password", newPassword);
         return mongoTemplate.update(User.class)
-                .matching(query).
-                apply(update).
-                first().
-                getModifiedCount() == 1;
+                .matching(query)
+                .apply(update)
+                .first()
+                .getMatchedCount() == 1;
     }
 
 }

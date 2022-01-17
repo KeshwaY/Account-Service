@@ -1,4 +1,4 @@
-package account.auth;
+package account.utils;
 
 import java.util.List;
 

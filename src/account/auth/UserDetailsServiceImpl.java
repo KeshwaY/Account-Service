@@ -1,7 +1,7 @@
 package account.auth;
 
-import account.user.User;
-import account.user.UserRepository;
+import account.auth.user.User;
+import account.auth.user.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

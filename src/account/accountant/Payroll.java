@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Document
 public class Payroll {
@@ -18,7 +19,7 @@ public class Payroll {
     private ObjectId employeeId;
 
     @NotBlank
-    private String period;
+    private LocalDateTime period;
 
     @NotNull
     private Long salary;
@@ -39,11 +40,11 @@ public class Payroll {
         this.employeeId = employeeId;
     }
 
-    public String getPeriod() {
+    public LocalDateTime getPeriod() {
         return period;
     }
 
-    public void setPeriod(String period) {
+    public void setPeriod(LocalDateTime period) {
         this.period = period;
     }
 

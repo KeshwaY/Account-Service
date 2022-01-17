@@ -1,7 +1,9 @@
-package account.employee;
+package account.accountant.employee;
 
-import account.employee.dto.EmployeeSalaryGetDto;
-import account.accountant.exceptions.UserDoesNotExistsException;
+import account.accountant.employee.dto.PayrollGetDto;
+import account.accountant.employee.exceptions.CouldNotFindPayrollsException;
+import account.accountant.exceptions.PayrollDoesNotExistException;
+import account.auth.user.exceptions.UserDoesNotExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,19 +26,19 @@ public class EmployeeController {
     }
 
     @GetMapping(value = "/payment", params = {"period"})
-    public ResponseEntity<EmployeeSalaryGetDto> getPayment(
+    public ResponseEntity<PayrollGetDto> getPayment(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam("period") @Pattern(regexp = "([0][1-9]|[1][0-2])\\-\\d{4}", message = "Wrong date!") String period
-    ) throws UserDoesNotExistsException {
-        EmployeeSalaryGetDto employeeSalaryGetDto = employeeService.findPayment(userDetails.getUsername(), period);
+    ) throws UserDoesNotExistsException, PayrollDoesNotExistException {
+        PayrollGetDto employeeSalaryGetDto = employeeService.findPayment(userDetails.getUsername(), period);
         return new ResponseEntity<>(employeeSalaryGetDto, HttpStatus.OK);
     }
 
     @GetMapping("/payment")
-    public ResponseEntity<List<EmployeeSalaryGetDto>> getPayments(
+    public ResponseEntity<List<PayrollGetDto>> getPayments(
             @AuthenticationPrincipal UserDetails userDetails
-    ) throws UserDoesNotExistsException {
-        List<EmployeeSalaryGetDto> employeeSalaryGetDtos = employeeService.findPayments(userDetails.getUsername());
+    ) throws UserDoesNotExistsException, CouldNotFindPayrollsException {
+        List<PayrollGetDto> employeeSalaryGetDtos = employeeService.findPayments(userDetails.getUsername());
         return new ResponseEntity<>(employeeSalaryGetDtos, HttpStatus.OK);
     }
 

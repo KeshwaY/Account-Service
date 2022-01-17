@@ -1,74 +1,69 @@
 package account.accountant;
 
-import account.accountant.dto.PayrollDto;
+import account.accountant.dto.PayrollPostPutDTO;
 import account.accountant.dto.StatusDTO;
+import account.accountant.exceptions.PayrollDoesNotExistException;
 import account.accountant.exceptions.PeriodIsNotUniqueException;
-import account.accountant.exceptions.UserDoesNotExistsException;
-import account.user.User;
-import account.user.UserRepository;
+import account.auth.user.exceptions.UserDoesNotExistsException;
+import account.auth.user.User;
+import account.auth.user.UserRepository;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AccountantService {
 
     private final UserRepository userRepository;
     private final PayrollRepository payrollRepository;
+    private final PeriodTranslator periodTranslator;
 
-    public AccountantService(UserRepository userRepository, PayrollRepository payrollRepository) {
+    private final PayrollDtoValidator payrollDtoValidator = new PayrollDtoValidator(this);
+
+    public AccountantService(UserRepository userRepository, PayrollRepository payrollRepository, PeriodTranslator periodTranslator) {
         this.userRepository = userRepository;
         this.payrollRepository = payrollRepository;
+        this.periodTranslator = periodTranslator;
     }
 
-    @Transactional
-    public StatusDTO createPayments(List<PayrollDto> payrollDtos) throws UserDoesNotExistsException, PeriodIsNotUniqueException {
-        for(PayrollDto payrollDto : payrollDtos) {
-            User user = validateCreatePayroll(payrollDto);
-            Payroll payroll = new Payroll();
-            payroll.setEmployeeId(
-                    new ObjectId(user.getId())
-            );
-            payroll.setPeriod(payrollDto.getPeriod());
-            payroll.setSalary(payrollDto.getSalary());
-            payrollRepository.save(payroll);
+    public UserRepository getUserRepository() {
+        return userRepository;
+    }
+
+    public PayrollRepository getPayrollRepository() {
+        return payrollRepository;
+    }
+
+    public StatusDTO createPayments(List<PayrollPostPutDTO> payrollDtos) throws UserDoesNotExistsException, PeriodIsNotUniqueException {
+        List <Payroll> payrolls = new ArrayList<>();
+        for(PayrollPostPutDTO payrollDto : payrollDtos) {
+            Payroll payroll = createPayroll(payrollDto);
+            payrolls.add(payroll);
         }
+        payrollRepository.saveAll(payrolls);
         return new StatusDTO("Added successfully!");
     }
 
-    private User validateCreatePayroll(PayrollDto dto) throws UserDoesNotExistsException, PeriodIsNotUniqueException {
-        Optional<User> user = userRepository.findByEmail(dto.getEmail());
-        if (user.isEmpty()) {
-            throw new UserDoesNotExistsException();
-        }
-        List<Payroll> payrolls = payrollRepository.findByUserEmailAndPayrollPeriod(dto.getEmail(), dto.getPeriod());
-        if (payrolls.size() > 0) {
-            throw new PeriodIsNotUniqueException();
-        }
-        return user.get();
+    // Will be replaced with mapper
+    private Payroll createPayroll(PayrollPostPutDTO payrollDto) throws UserDoesNotExistsException, PeriodIsNotUniqueException {
+        User user = payrollDtoValidator.checkIfUserExistsAndPayrollDoesNot(payrollDto);
+        Payroll payroll = new Payroll();
+        payroll.setEmployeeId(
+                new ObjectId(user.getId())
+        );
+        payroll.setPeriod(periodTranslator.translatePeriodToLocalDateTime(payrollDto.getPeriod()));
+        payroll.setSalary(payrollDto.getSalary());
+        return payroll;
     }
 
-    @Transactional
-    public StatusDTO updatePayments(PayrollDto payrollDto) throws UserDoesNotExistsException, PeriodIsNotUniqueException {
-        Payroll payroll = validateUpdatePayroll(payrollDto);
-        payroll.setPeriod(payrollDto.getPeriod());
+    public StatusDTO updatePayments(PayrollPostPutDTO payrollDto) throws UserDoesNotExistsException, PayrollDoesNotExistException {
+        Payroll payroll = payrollDtoValidator.checkIfUserAndPayrollExists(payrollDto);
+        payroll.setPeriod(periodTranslator.translatePeriodToLocalDateTime(payrollDto.getPeriod()));
         payroll.setSalary(payrollDto.getSalary());
         payrollRepository.save(payroll);
         return new StatusDTO("Updated successfully!");
-    }
-
-    private Payroll validateUpdatePayroll(PayrollDto dto) throws UserDoesNotExistsException, PeriodIsNotUniqueException {
-        if (userRepository.findByEmail(dto.getEmail()).isEmpty()) {
-            throw new UserDoesNotExistsException();
-        }
-        List<Payroll> payrolls = payrollRepository.findByUserEmailAndPayrollPeriod(dto.getEmail(), dto.getPeriod());
-        if (payrolls.size() != 1) {
-            throw new PeriodIsNotUniqueException();
-        }
-        return payrolls.get(0);
     }
 
 }

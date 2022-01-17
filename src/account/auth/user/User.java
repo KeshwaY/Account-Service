@@ -1,17 +1,16 @@
-package account.user;
+package account.auth.user;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 @Document
 public class User {
 
-    @Id private String id;
+    @Id
+    private String id;
 
     @NotBlank
     private String name;
