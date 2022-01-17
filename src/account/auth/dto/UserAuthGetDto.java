@@ -15,6 +15,14 @@ public class UserAuthGetDto {
     @Email(regexp = ".+@acme\\.com")
     private String email;
 
+    public UserAuthGetDto() {}
+
+    public UserAuthGetDto(String name, String lastname, String email) {
+        this.name = name;
+        this.lastname = lastname;
+        this.email = email;
+    }
+
     public String getName() {
         return name;
     }
