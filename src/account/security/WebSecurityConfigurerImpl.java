@@ -35,8 +35,10 @@ public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .mvcMatchers(HttpMethod.GET, "/api/empl/payment").authenticated()
-                .antMatchers(HttpMethod.POST, "/api/auth/changepass").authenticated()
-                .antMatchers(HttpMethod.POST, "/api/singup").permitAll()
+                .mvcMatchers(HttpMethod.POST, "/api/auth/changepass").authenticated()
+                .mvcMatchers(HttpMethod.GET, "/api/empl/payment").authenticated()
+                .mvcMatchers(HttpMethod.POST, "/api/singup", "api/acct/payments").permitAll()
+                .mvcMatchers(HttpMethod.PUT, "api/acct/payments").permitAll()
                 .and()
                 .sessionManagement()
                 .and()
