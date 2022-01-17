@@ -1,5 +1,6 @@
 package account.auth.dto;
 
+// Will be implemented after last stage
 public interface UserAuthMapper {
 /*
     @Mapping(target = "id", ignore = true)

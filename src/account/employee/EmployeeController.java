@@ -1,7 +1,7 @@
 package account.employee;
 
 import account.employee.dto.EmployeeSalaryGetDto;
-import account.accountant.exceptions.UserDoesNotExistsException;
+import account.auth.user.exceptions.UserDoesNotExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

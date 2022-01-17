@@ -2,16 +2,13 @@ package account.employee;
 
 import account.accountant.Payroll;
 import account.accountant.PayrollRepository;
-import account.accountant.dto.PayrollDto;
 import account.employee.dto.EmployeeSalaryGetDto;
-import account.accountant.exceptions.UserDoesNotExistsException;
-import account.user.User;
-import account.user.UserRepository;
+import account.auth.user.exceptions.UserDoesNotExistsException;
+import account.auth.user.User;
+import account.auth.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormatSymbols;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;

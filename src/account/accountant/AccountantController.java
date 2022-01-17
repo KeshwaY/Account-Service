@@ -3,7 +3,7 @@ package account.accountant;
 import account.accountant.dto.PayrollDto;
 import account.accountant.dto.StatusDTO;
 import account.accountant.exceptions.PeriodIsNotUniqueException;
-import account.accountant.exceptions.UserDoesNotExistsException;
+import account.auth.user.exceptions.UserDoesNotExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

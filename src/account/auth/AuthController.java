@@ -1,11 +1,14 @@
 package account.auth;
 
 
+import account.auth.dto.UserAuthPostDto;
+import account.auth.exceptions.PasswordIsBreachedException;
 import account.auth.dto.NewPasswordPostDto;
 import account.auth.dto.PasswordChangedDto;
 import account.auth.dto.UserAuthGetDto;
-import account.auth.dto.UserAuthPostDto;
-import account.user.UserService;
+import account.auth.exceptions.PasswordHasNotChangedException;
+import account.auth.user.UserService;
+import account.auth.user.exceptions.UserDoesNotExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,12 +41,13 @@ public class AuthController {
     public ResponseEntity<PasswordChangedDto> changeUserPassword(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody @Valid NewPasswordPostDto newPasswordPostDto
-    ) {
+    ) throws PasswordIsBreachedException, UserDoesNotExistsException, PasswordHasNotChangedException {
         String userEmail = userDetails.getUsername();
         String userPassword = userDetails.getPassword();
         return new ResponseEntity<>(userService.changeUserPassword(userEmail, userPassword, newPasswordPostDto), HttpStatus.OK);
     }
 
+    // Will be replaced
     private final static class JBResponse {
         private static long id;
 
