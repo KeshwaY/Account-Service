@@ -1,16 +1,25 @@
 package account.auth.user;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Document
 public class User {
 
+    @Transient
+    public static final String SEQUENCE_NAME = "users_sequence";
+
     @Id
     private String id;
+
+    @NotEmpty
+    private int jbaId;
 
     @NotBlank
     private String name;
@@ -25,7 +34,7 @@ public class User {
     @NotBlank
     private String password;
 
-    private String role;
+    private List<String> roles;
 
     public String getId() {
         return id;
@@ -33,6 +42,14 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public int getJbaId() {
+        return jbaId;
+    }
+
+    public void setJbaId(int jbaId) {
+        this.jbaId = jbaId;
     }
 
     public String getName() {
@@ -67,12 +84,12 @@ public class User {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
+    public List<String> getRoles() {
+        return roles;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 
 }

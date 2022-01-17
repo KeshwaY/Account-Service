@@ -2,8 +2,13 @@ package account.auth.dto;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 public class UserAuthGetDto {
+
+    @NotEmpty
+    private int id;
 
     @NotBlank
     private String name;
@@ -15,12 +20,25 @@ public class UserAuthGetDto {
     @Email(regexp = ".+@acme\\.com")
     private String email;
 
-    public UserAuthGetDto() {}
+    private List<String> roles;
 
-    public UserAuthGetDto(String name, String lastname, String email) {
+    public UserAuthGetDto() {
+    }
+
+    public UserAuthGetDto(int id, String name, String lastname, String email, List<String> roles) {
+        this.id = id;
         this.name = name;
         this.lastname = lastname;
         this.email = email;
+        this.roles = roles;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -46,4 +64,13 @@ public class UserAuthGetDto {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+
 }
