@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.*;
 
-public class PayrollDto {
+public class PayrollPostPutDTO {
 
     @JsonProperty("employee")
     @NotBlank

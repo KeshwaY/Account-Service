@@ -1,8 +1,8 @@
-package account.employee.dto;
+package account.accountant.employee.dto;
 
 import javax.validation.constraints.NotBlank;
 
-public class EmployeeSalaryGetDto {
+public class PayrollGetDto {
 
     @NotBlank
     private String name;
@@ -13,9 +13,9 @@ public class EmployeeSalaryGetDto {
     @NotBlank
     private String salary;
 
-    public EmployeeSalaryGetDto() {}
+    public PayrollGetDto() {}
 
-    public EmployeeSalaryGetDto(String name, String lastname, String period, String salary) {
+    public PayrollGetDto(String name, String lastname, String period, String salary) {
         this.name = name;
         this.lastname = lastname;
         this.period = period;

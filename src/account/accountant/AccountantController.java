@@ -1,7 +1,8 @@
 package account.accountant;
 
-import account.accountant.dto.PayrollDto;
+import account.accountant.dto.PayrollPostPutDTO;
 import account.accountant.dto.StatusDTO;
+import account.accountant.exceptions.PayrollDoesNotExistException;
 import account.accountant.exceptions.PeriodIsNotUniqueException;
 import account.auth.user.exceptions.UserDoesNotExistsException;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class AccountantController {
 
     @PostMapping("/payments")
     public ResponseEntity<StatusDTO> createPayments(
-            @RequestBody List<@Valid PayrollDto> payrollDtos
+            @RequestBody List<@Valid PayrollPostPutDTO> payrollDtos
     ) throws UserDoesNotExistsException, PeriodIsNotUniqueException {
         StatusDTO statusDTO = accountantService.createPayments(payrollDtos);
         return new ResponseEntity<>(statusDTO, HttpStatus.OK);
@@ -33,8 +34,8 @@ public class AccountantController {
 
     @PutMapping("/payments")
     public ResponseEntity<StatusDTO> updatePayments(
-            @RequestBody PayrollDto payrollDto
-    ) throws UserDoesNotExistsException, PeriodIsNotUniqueException {
+            @RequestBody PayrollPostPutDTO payrollDto
+    ) throws UserDoesNotExistsException, PayrollDoesNotExistException {
         StatusDTO statusDTO = accountantService.updatePayments(payrollDto);
         return new ResponseEntity<>(statusDTO, HttpStatus.OK);
     }
