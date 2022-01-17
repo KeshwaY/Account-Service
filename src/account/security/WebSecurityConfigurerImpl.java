@@ -1,5 +1,6 @@
 package account.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,7 +14,6 @@ public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
-    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
     public WebSecurityConfigurerImpl(
             UserDetailsService userDetailsService,
@@ -21,7 +21,6 @@ public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
             PasswordEncoder passwordEncoder
     ) {
         this.userDetailsService = userDetailsService;
-        this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -33,19 +32,47 @@ public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .mvcMatchers(HttpMethod.GET, "/api/empl/payment").authenticated()
-                .mvcMatchers(HttpMethod.POST, "/api/auth/changepass").authenticated()
-                .mvcMatchers(HttpMethod.GET, "/api/empl/payment").authenticated()
-                .mvcMatchers(HttpMethod.POST, "/api/singup", "api/acct/payments").permitAll()
-                .mvcMatchers(HttpMethod.PUT, "api/acct/payments").permitAll()
-                .and()
+        // Main configuration
+        http
                 .sessionManagement()
                 .and()
                 .httpBasic()
-                .authenticationEntryPoint(restAuthenticationEntryPoint)
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(getRestAuthenticationEntryPoint())
+                .accessDeniedHandler(getCustomAccessDeniedHandler())
                 .and()
                 .csrf().disable();
+
+        // Admin User access configuration
+        http.authorizeRequests()
+                .mvcMatchers(HttpMethod.PUT, "api/admin", "api/admin/**").hasRole("ADMINISTRATOR")
+                .mvcMatchers(HttpMethod.DELETE, "api/admin", "api/admin/**").hasRole("ADMINISTRATOR")
+                .mvcMatchers(HttpMethod.GET, "api/admin", "api/admin/**").hasRole("ADMINISTRATOR");
+
+        // Accountant User access configuration
+        http.authorizeRequests()
+                .mvcMatchers(HttpMethod.POST, "api/acct/payments").hasRole("ACCOUNTANT")
+                .mvcMatchers(HttpMethod.PUT, "api/acct/payments").hasRole("ACCOUNTANT");
+
+        // User access configuration
+        http.authorizeRequests()
+                .mvcMatchers(HttpMethod.POST, "api/auth/changepass").hasAnyRole("USER", "ACCOUNTANT", "ADMINISTRATOR")
+                .mvcMatchers(HttpMethod.GET, "api/empl/payment").hasAnyRole("USER", "ACCOUNTANT");
+
+        // Anonymous User access configuration
+        http.authorizeRequests()
+                .mvcMatchers(HttpMethod.PUT, "api/auth/signup").permitAll();
+    }
+
+    @Bean
+    public RestAuthenticationEntryPoint getRestAuthenticationEntryPoint() {
+        return new RestAuthenticationEntryPoint();
+    }
+
+    @Bean
+    public CustomAccessDeniedHandler getCustomAccessDeniedHandler() {
+        return new CustomAccessDeniedHandler();
     }
 
 }

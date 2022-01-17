@@ -8,10 +8,13 @@ import account.auth.exceptions.PasswordHasNotChangedException;
 import account.auth.exceptions.PasswordIsBreachedException;
 import account.auth.exceptions.UserExistException;
 import account.auth.user.exceptions.UserDoesNotExistsException;
+import account.auth.user.sequence.SequenceGenerator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -20,9 +23,12 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserDtoValidator userDtoValidator = new UserDtoValidator(this);
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    private final SequenceGenerator sequenceGenerator;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, SequenceGenerator sequenceGenerator) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.sequenceGenerator = sequenceGenerator;
     }
 
     public UserRepository getUserRepository() {
@@ -44,21 +50,32 @@ public class UserService {
     // Will be replaced with mapper
     private User createUserFromDto(UserAuthPostDto postDto) {
         User user = new User();
+        user.setJbaId(sequenceGenerator.generateSequence(User.SEQUENCE_NAME));
         user.setName(postDto.getName());
         user.setLastname(postDto.getLastname());
         user.setEmail(postDto.getEmail());
         user.setPassword(postDto.getPassword());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("ROLE_USER");
+        user.setRoles(List.of(getUserRole()));
         return user;
+    }
+
+    private String getUserRole() {
+        Optional<User> user = userRepository.findByRolesIsContaining("ROLE_ADMINISTRATOR");
+        if (user.isPresent()) {
+            return "ROLE_USER";
+        }
+        return "ROLE_ADMINISTRATOR";
     }
 
     // Will be replaced with mapper
     private UserAuthGetDto createUserGetDtoFromUser(User user) {
         UserAuthGetDto userAuthGetDto = new UserAuthGetDto();
+        userAuthGetDto.setId(user.getJbaId());
         userAuthGetDto.setName(user.getName());
         userAuthGetDto.setLastname(user.getLastname());
         userAuthGetDto.setEmail(user.getEmail());
+        userAuthGetDto.setRoles(user.getRoles());
         return userAuthGetDto;
     }
 

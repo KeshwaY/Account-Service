@@ -34,7 +34,7 @@ public class AccountantController {
 
     @PutMapping("/payments")
     public ResponseEntity<StatusDTO> updatePayments(
-            @RequestBody PayrollPostPutDTO payrollDto
+            @RequestBody @Valid PayrollPostPutDTO payrollDto
     ) throws UserDoesNotExistsException, PayrollDoesNotExistException {
         StatusDTO statusDTO = accountantService.updatePayments(payrollDto);
         return new ResponseEntity<>(statusDTO, HttpStatus.OK);

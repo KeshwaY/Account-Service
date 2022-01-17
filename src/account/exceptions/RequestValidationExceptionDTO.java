@@ -1,7 +1,5 @@
 package account.exceptions;
 
-import org.springframework.web.context.request.WebRequest;
-
 import java.sql.Timestamp;
 
 public class RequestValidationExceptionDTO {

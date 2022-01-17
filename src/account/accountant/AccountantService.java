@@ -4,9 +4,9 @@ import account.accountant.dto.PayrollPostPutDTO;
 import account.accountant.dto.StatusDTO;
 import account.accountant.exceptions.PayrollDoesNotExistException;
 import account.accountant.exceptions.PeriodIsNotUniqueException;
-import account.auth.user.exceptions.UserDoesNotExistsException;
 import account.auth.user.User;
 import account.auth.user.UserRepository;
+import account.auth.user.exceptions.UserDoesNotExistsException;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +34,10 @@ public class AccountantService {
 
     public PayrollRepository getPayrollRepository() {
         return payrollRepository;
+    }
+
+    public PeriodTranslator getPeriodTranslator() {
+        return periodTranslator;
     }
 
     public StatusDTO createPayments(List<PayrollPostPutDTO> payrollDtos) throws UserDoesNotExistsException, PeriodIsNotUniqueException {

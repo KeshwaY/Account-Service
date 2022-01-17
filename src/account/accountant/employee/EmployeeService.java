@@ -30,7 +30,7 @@ public class EmployeeService {
 
     public PayrollGetDto findPayment(String email, String period) throws UserDoesNotExistsException, PayrollDoesNotExistException {
         User user = userRepository.findByEmail(email).orElseThrow(UserDoesNotExistsException::new);
-        Payroll payroll = payrollRepository.findByUserEmailAndPayrollPeriod(email, period).orElseThrow(PayrollDoesNotExistException::new);
+        Payroll payroll = payrollRepository.findByUserEmailAndPayrollPeriod(email, periodTranslator.translatePeriodToLocalDateTime(period)).orElseThrow(PayrollDoesNotExistException::new);
         PayrollGetDto dto = createDto(user, payroll);
         dto.setPeriod(translatePeriod(payroll.getPeriod()));
         return dto;
