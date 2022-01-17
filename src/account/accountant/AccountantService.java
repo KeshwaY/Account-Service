@@ -36,6 +36,10 @@ public class AccountantService {
         return payrollRepository;
     }
 
+    public PeriodTranslator getPeriodTranslator() {
+        return periodTranslator;
+    }
+
     public StatusDTO createPayments(List<PayrollPostPutDTO> payrollDtos) throws UserDoesNotExistsException, PeriodIsNotUniqueException {
         List <Payroll> payrolls = new ArrayList<>();
         for(PayrollPostPutDTO payrollDto : payrollDtos) {
