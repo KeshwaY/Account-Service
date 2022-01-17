@@ -33,19 +33,34 @@ public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .mvcMatchers(HttpMethod.GET, "/api/empl/payment").authenticated()
-                .mvcMatchers(HttpMethod.POST, "/api/auth/changepass").authenticated()
-                .mvcMatchers(HttpMethod.GET, "/api/empl/payment").authenticated()
-                .mvcMatchers(HttpMethod.POST, "/api/singup", "api/acct/payments").permitAll()
-                .mvcMatchers(HttpMethod.PUT, "api/acct/payments").permitAll()
-                .and()
+        // Main configuration
+        http
                 .sessionManagement()
                 .and()
                 .httpBasic()
                 .authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
                 .csrf().disable();
+
+        // Admin User access configuration
+        http.authorizeRequests()
+                .mvcMatchers(HttpMethod.PUT, "api/admin/user/role").hasRole("ADMINISTRATOR")
+                .mvcMatchers(HttpMethod.DELETE, "api/admin/user").hasRole("ADMINISTRATOR")
+                .mvcMatchers(HttpMethod.GET, "api/admin/user").hasRole("ADMINISTRATOR");
+
+        // Accountant User access configuration
+        http.authorizeRequests()
+                .mvcMatchers(HttpMethod.POST, "api/acct/payments").hasRole("ACCOUNTANT")
+                .mvcMatchers(HttpMethod.PUT, "api/acct/payments").hasRole("ACCOUNTANT");
+
+        // User access configuration
+        http.authorizeRequests()
+                .mvcMatchers(HttpMethod.POST, "api/auth/changepass").hasAnyRole("USER", "ACCOUNTANT", "ADMINISTRATOR")
+                .mvcMatchers(HttpMethod.GET, "api/empl/payment").hasAnyRole("USER", "ACCOUNTANT");
+
+        // Anonymous User access configuration
+        http.authorizeRequests()
+                .mvcMatchers(HttpMethod.PUT, "api/auth/signup").permitAll();
     }
 
 }
