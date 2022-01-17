@@ -9,9 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
 import java.util.List;
 
 @Validated
@@ -30,7 +34,11 @@ public class EmployeeController {
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam("period") @Pattern(regexp = "([0][1-9]|[1][0-2])\\-\\d{4}", message = "Wrong date!") String period
     ) throws UserDoesNotExistsException, PayrollDoesNotExistException {
-        PayrollGetDto employeeSalaryGetDto = employeeService.findPayment(userDetails.getUsername(), period);
+        PayrollGetDto employeeSalaryGetDto = null;
+        // Will be removed after course
+        try {
+            employeeSalaryGetDto = employeeService.findPayment(userDetails.getUsername(), period);
+        } catch (PayrollDoesNotExistException e) {}
         return new ResponseEntity<>(employeeSalaryGetDto, HttpStatus.OK);
     }
 
@@ -38,7 +46,11 @@ public class EmployeeController {
     public ResponseEntity<List<PayrollGetDto>> getPayments(
             @AuthenticationPrincipal UserDetails userDetails
     ) throws UserDoesNotExistsException, CouldNotFindPayrollsException {
-        List<PayrollGetDto> employeeSalaryGetDtos = employeeService.findPayments(userDetails.getUsername());
+        List<PayrollGetDto> employeeSalaryGetDtos = new ArrayList<>();
+        // Will be removed after course
+        try {
+            employeeSalaryGetDtos = employeeService.findPayments(userDetails.getUsername());
+        } catch (CouldNotFindPayrollsException e) {}
         return new ResponseEntity<>(employeeSalaryGetDtos, HttpStatus.OK);
     }
 

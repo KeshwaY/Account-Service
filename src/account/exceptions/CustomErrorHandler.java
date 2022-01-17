@@ -1,6 +1,5 @@
 package account.exceptions;
 
-import account.exceptions.RequestValidationExceptionDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -16,7 +15,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @ControllerAdvice
-public class CustomErrorHandler{
+public class CustomErrorHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -34,6 +33,7 @@ public class CustomErrorHandler{
         );
         return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
     }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<RequestValidationExceptionDTO> handleConstraintViolationException(

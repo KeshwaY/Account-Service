@@ -1,12 +1,12 @@
 package account.auth.user;
 
-import account.utils.BreachedPasswordsSupplier;
 import account.auth.dto.NewPasswordPostDto;
 import account.auth.dto.UserAuthPostDto;
 import account.auth.exceptions.PasswordHasNotChangedException;
 import account.auth.exceptions.PasswordIsBreachedException;
 import account.auth.exceptions.UserExistException;
 import account.auth.user.exceptions.UserDoesNotExistsException;
+import account.utils.BreachedPasswordsSupplier;
 
 public class UserDtoValidator {
     private final UserService userService;
